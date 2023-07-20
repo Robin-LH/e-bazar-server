@@ -4,6 +4,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 class Discount {
   @Prop()
   start: string;
+
+  @Prop()
   end: string;
 }
 
