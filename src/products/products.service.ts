@@ -15,7 +15,7 @@ export class ProductsService {
     return product;
   }
 
-  async findAll(pageNo: string, perPage: string, query: string) {
+  async findAll(pageNo?: string, perPage?: string, query?: string) {
     try {
       const pagination = {
         page: Number(pageNo) || 1,
