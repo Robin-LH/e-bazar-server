@@ -32,8 +32,6 @@ export class CartService {
         return 'Added to Cart successfully.';
       }
     } catch (error) {
-      console.log('cart create failed for ==> ', error);
-
       throw new HttpException(
         'Something went wrong',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -96,8 +94,6 @@ export class CartService {
 
       return 'Success';
     } catch (error) {
-      console.log(error);
-
       if (error.status === 403)
         throw new HttpException(error.response, HttpStatus.FORBIDDEN);
 
@@ -134,5 +130,3 @@ export class CartService {
     }
   }
 }
-
-// hello world

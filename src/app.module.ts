@@ -6,10 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: '.env',
-      isGlobal: true,
-    }),
+    ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true }),
     MongooseModule.forRoot(
       `mongodb+srv://robin:${process.env.DB_Password}@cluster0.mjyafms.mongodb.net/${process.env.App_Mode}`,
     ),

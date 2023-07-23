@@ -16,37 +16,50 @@ export class ProductsService {
   }
 
   async findAll(pageNo: string, perPage: string, query: string) {
-    const pagination = {
-      page: Number(pageNo) || 1,
-      perPage: Number(perPage) || 5,
-    };
+    try {
+      const pagination = {
+        page: Number(pageNo) || 1,
+        perPage: Number(perPage) || 5,
+      };
 
-    const skip = (pagination.page - 1) * pagination.perPage;
+      const skip = (pagination.page - 1) * pagination.perPage;
 
-    const products = await this.productModel
-      .find({ title: { $regex: `${query}`, $options: 'i' } })
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(pagination.perPage);
+      const products = await this.productModel
+        .find({ title: { $regex: `${query || ''}`, $options: 'i' } })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(pagination.perPage);
 
-    const productsLength = await this.productModel.count();
+      const productsLength = await this.productModel.count();
 
-    return {
-      slice: `${skip + 1}-${products.length * (skip + 1)}`,
-      total: productsLength,
-      products,
-    };
+      return {
+        slice: `${skip + 1}-${products.length * (skip + 1)}`,
+        total: productsLength,
+        products,
+      };
+    } catch (error) {
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async findOne(id: string) {
     try {
       const product = await this.productModel.findById(id);
       if (!product) {
-        throw new HttpException(`Not found`, HttpStatus.NOT_FOUND);
+        throw new HttpException(`Product Not found`, HttpStatus.NOT_FOUND);
       }
       return product;
     } catch (error) {
-      return 'Product fatching failed';
+      if (error.status === 404)
+        throw new HttpException(error.response, HttpStatus.NOT_FOUND);
+
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -55,7 +68,10 @@ export class ProductsService {
       await this.productModel.findOneAndDelete({ _id: id });
       return `Product deleted successful.`;
     } catch (error) {
-      return 'Product delated failed';
+      throw new HttpException(
+        'Something went wrong',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }
